@@ -30,7 +30,7 @@ def run_sine_experiment():
   model.enableInference({'predictedField': 'sine'})
   
   iteration = 0
-  for i in range(100):
+  for i in range(1000):
     angle = iteration
     sine_value = math.sin(math.radians(angle))
     modelInput = {'sine': sine_value}
