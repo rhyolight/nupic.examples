@@ -18,6 +18,7 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
+import csv
 from collections import deque
 from abc import ABCMeta, abstractmethod
 import matplotlib.pyplot as plt
@@ -53,17 +54,20 @@ class NuPICFileOutput(NuPICOutput):
 
   def __init__(self, *args, **kwargs):
     super(NuPICFileOutput, self).__init__(*args, **kwargs)
-    self.file = open("%s.csv" % (self.name,), 'w')
+    self.writer = csv.writer(open("%s.csv" % (self.name,), 'w'))
+    header_row = ['angle', 'sine', 'prediction']
+    if self.show_anomaly_score:
+      header_row.append('anomaly score')
+    self.writer.writerow(header_row)
 
 
   def write(self, index, value, prediction_result, prediction_step=1):
     prediction = prediction_result.inferences\
       ['multiStepBestPredictions'][prediction_step]
+    output_row = [index, value, prediction]
     if self.show_anomaly_score:
-      anomaly_score = prediction_result.inferences['anomalyScore']
-      self.file.write("%i,%f,%f,%f\n" % (index, value, prediction, anomaly_score))
-    else:
-      self.file.write("%i,%f,%f\n" % (index, value, prediction))
+      output_row.append(prediction_result.inferences['anomalyScore'])
+    self.writer.writerow(output_row)
 
 
   def close(self):
