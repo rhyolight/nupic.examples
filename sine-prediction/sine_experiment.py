@@ -25,7 +25,7 @@ from nupic_output import NuPICFileOutput, NuPICPlotOutput
 import sine_model_params
 
 def run_sine_experiment():
-  output = NuPICFileOutput('sine_output', show_anomaly_score=True)
+  output = NuPICPlotOutput('sine_output', show_anomaly_score=True)
   model = ModelFactory.create(sine_model_params.MODEL_PARAMS)
   model.enableInference({'predictedField': 'sine'})
   
