@@ -25,21 +25,20 @@ from nupic_output import NuPICFileOutput, NuPICPlotOutput
 import sine_model_params
 
 def run_sine_experiment():
-  output = NuPICPlotOutput('sine_output')
-  
+  output = NuPICFileOutput('sine_output', show_anomaly_score=True)
   model = ModelFactory.create(sine_model_params.MODEL_PARAMS)
   model.enableInference({'predictedField': 'sine'})
   
   iteration = 0
-  for i in range(1000):
-    angle = iteration * 10
+  for i in range(100):
+    angle = iteration
     sine_value = math.sin(math.radians(angle))
     modelInput = {'sine': sine_value}
     result = model.run(modelInput)
     if angle is 180:
       angle = 0
 
-    output.write(angle, sine_value, result)
+    output.write(angle, sine_value, result, prediction_step=1)
     iteration = iteration + 1
 
 

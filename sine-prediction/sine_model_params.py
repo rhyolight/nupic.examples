@@ -31,7 +31,7 @@ MODEL_PARAMS = {
     # Model parameter dictionary.
     'modelParams': {
         # The type of inference that this model will perform
-        'inferenceType': 'TemporalMultiStep',
+        'inferenceType': 'TemporalAnomaly',
 
         'sensorParams': {
             # Sensor diagnostic output verbosity control;
@@ -213,7 +213,13 @@ MODEL_PARAMS = {
 
             # This is set after the call to updateConfigFromSubConfig and is
             # computed from the aggregationInfo and predictAheadTime.
-            'steps': '1',
+            'steps': '1,5',
+        },
+
+        'anomalyParams': {  
+            'anomalyCacheRecords': None,
+            'autoDetectThreshold': None,
+            'autoDetectWaitRecords': 2184
         },
 
         'trainSPNetOnlyIfRequested': False,

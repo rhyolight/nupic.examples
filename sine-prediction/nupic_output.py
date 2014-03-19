@@ -28,11 +28,19 @@ WINDOW = 360
 
 
 class NuPICOutput(object):
+
   __metaclass__ = ABCMeta
 
+
+  def __init__(self, name, show_anomaly_score=False):
+    self.name = name
+    self.show_anomaly_score = show_anomaly_score
+
+
   @abstractmethod
-  def write(self, index, value, prediction_result):
+  def write(self, index, value, prediction_result, prediction_step=1):
     pass
+
 
   @abstractmethod
   def close(self):
@@ -43,13 +51,19 @@ class NuPICOutput(object):
 class NuPICFileOutput(NuPICOutput):
 
 
-  def __init__(self, name):
-    self.file = open("%s.csv" % (name,), 'w')
+  def __init__(self, *args, **kwargs):
+    super(NuPICFileOutput, self).__init__(*args, **kwargs)
+    self.file = open("%s.csv" % (self.name,), 'w')
 
 
-  def write(self, index, value, prediction_result):
-    prediction = prediction_result.inferences['multiStepBestPredictions'][1]
-    self.file.write("%i,%f,%f\n" % (index, value, prediction))
+  def write(self, index, value, prediction_result, prediction_step=1):
+    prediction = prediction_result.inferences\
+      ['multiStepBestPredictions'][prediction_step]
+    if self.show_anomaly_score:
+      anomaly_score = prediction_result.inferences['anomalyScore']
+      self.file.write("%i,%f,%f,%f\n" % (index, value, prediction, anomaly_score))
+    else:
+      self.file.write("%i,%f,%f\n" % (index, value, prediction))
 
 
   def close(self):
@@ -60,7 +74,8 @@ class NuPICFileOutput(NuPICOutput):
 class NuPICPlotOutput(NuPICOutput):
 
 
-  def __init__(self, name):
+  def __init__(self, *args, **kwargs):
+    super(NuPICPlotOutput, self).__init__(*args, **kwargs)
     # turn matplotlib interactive mode on (ion)
     plt.ion()
     self.fig = plt.figure()
@@ -73,27 +88,42 @@ class NuPICPlotOutput(NuPICOutput):
     # Keep the last WINDOW predicted and actual values for plotting.
     self.actual_history = deque([0.0] * WINDOW, maxlen=360)
     self.predicted_history = deque([0.0] * WINDOW, maxlen=360)
+    if self.show_anomaly_score:
+      self.anomaly_score = deque([0.0] * WINDOW, maxlen=360)
     # Initialize the plot lines that we will update with each new record.
     self.actual_line, = plt.plot(range(WINDOW), self.actual_history)
     self.predicted_line, = plt.plot(range(WINDOW), self.predicted_history)
+    if self.show_anomaly_score:
+      self.anomaly_score_line, = plt.plot(range(WINDOW), self.anomaly_score)
     # Set the y-axis range.
     self.actual_line.axes.set_ylim(-1, 1)
     self.predicted_line.axes.set_ylim(-1, 1)
+    if self.show_anomaly_score:
+      self.anomaly_score_line.axes.set_ylim(-1, 1)
 
 
-  def write(self, index, value, prediction_result):
+  def write(self, index, value, prediction_result, prediction_step=1):
     shifted_result = self.shifter.shift(prediction_result)
     # Update the trailing predicted and actual value deques.
-    inference = shifted_result.inferences['multiStepBestPredictions'][1]
+    inference = shifted_result.inferences\
+      ['multiStepBestPredictions'][prediction_step]
+    anomaly_score = prediction_result.inferences['anomalyScore']
     if inference is not None:
       self.actual_history.append(shifted_result.rawInput['sine'])
       self.predicted_history.append(inference)
+      if self.show_anomaly_score:
+        self.anomaly_score.append(anomaly_score)
 
     # Redraw the chart with the new data.
     self.actual_line.set_ydata(self.actual_history)  # update the data
     self.predicted_line.set_ydata(self.predicted_history)  # update the data
+    if self.show_anomaly_score:
+      self.anomaly_score_line.set_ydata(self.anomaly_score)  # update the data
     plt.draw()
-    plt.legend( ('actual','predicted') )    
+    legend_fields = ['actual','predicted']
+    if self.show_anomaly_score:
+      legend_fields.append('anomaly score')
+    plt.legend(tuple(legend_fields), loc=3)
 
 
 
