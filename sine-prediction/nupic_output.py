@@ -54,7 +54,11 @@ class NuPICFileOutput(NuPICOutput):
 
   def __init__(self, *args, **kwargs):
     super(NuPICFileOutput, self).__init__(*args, **kwargs)
-    self.writer = csv.writer(open("%s.csv" % (self.name,), 'w'))
+    self.linecount = 0
+    output_filename = "%s.csv" % self.name
+    print "Preparing to output to %s" % output_filename
+    self.file = open(output_filename, 'w')
+    self.writer = csv.writer(self.file)
     header_row = ['angle', 'sine', 'prediction']
     if self.show_anomaly_score:
       header_row.append('anomaly score')
@@ -68,10 +72,12 @@ class NuPICFileOutput(NuPICOutput):
     if self.show_anomaly_score:
       output_row.append(prediction_result.inferences['anomalyScore'])
     self.writer.writerow(output_row)
+    self.linecount = self.linecount + 1
 
 
   def close(self):
     self.file.close()
+    print "Done. Wrote %i data lines to %s." % (self.linecount, self.file.name)
 
 
 
@@ -104,6 +110,11 @@ class NuPICPlotOutput(NuPICOutput):
     self.predicted_line.axes.set_ylim(-1, 1)
     if self.show_anomaly_score:
       self.anomaly_score_line.axes.set_ylim(-1, 1)
+    legend_fields = ['actual','predicted']
+    if self.show_anomaly_score:
+      legend_fields.append('anomaly score')
+    plt.legend(tuple(legend_fields), loc=3)
+
 
 
   def write(self, index, value, prediction_result, prediction_step=1):
@@ -125,15 +136,12 @@ class NuPICPlotOutput(NuPICOutput):
     if self.show_anomaly_score:
       self.anomaly_score_line.set_ydata(self.anomaly_score)  # update the data
     plt.draw()
-    legend_fields = ['actual','predicted']
-    if self.show_anomaly_score:
-      legend_fields.append('anomaly score')
-    plt.legend(tuple(legend_fields), loc=3)
 
 
 
   def close(self):
     plt.ioff()
+    plt.show()
 
 
 

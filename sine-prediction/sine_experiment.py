@@ -29,23 +29,25 @@ from nupic.swarming import permutations_runner
 
 import generate_data
 
+SWARM_DEF = "search_def.json"
 
 
 def swarm_over_data():
-  permutations_runner.runPermutations(['search_def.json', '--maxWorkers=8', '--overwrite'])
-  shutil.copyfile('model_0/model_params.py', 'model_params.py')
+  permutations_runner.runPermutations([SWARM_DEF, "--maxWorkers=8", "--overwrite"])
+  shutil.copyfile("model_0/model_params.py", "model_params.py")
 
 
 
 def run_sine_experiment():
-  generate_data.run()
+  input_file = "sine.csv"
+  generate_data.run(input_file)
   swarm_over_data()
   import model_params
-  output = NuPICPlotOutput('sine_output', show_anomaly_score=False)
+  output = NuPICFileOutput("sine_output", show_anomaly_score=False)
   model = ModelFactory.create(model_params.MODEL_PARAMS)
-  model.enableInference({'predictedField': 'sine'})
-  
-  with open('sine.csv', 'rb') as sine_input:
+  model.enableInference({"predictedField": "sine"})
+
+  with open(input_file, "rb") as sine_input:
     csv_reader = csv.reader(sine_input)
 
     # skip header rows
@@ -57,7 +59,7 @@ def run_sine_experiment():
     for row in csv_reader:
       angle = float(row[0])
       sine_value = float(row[1])
-      result = model.run({'sine': sine_value})
+      result = model.run({"sine": sine_value})
       output.write(angle, sine_value, result, prediction_step=1)
 
   output.close()
