@@ -43,7 +43,7 @@ def run_sine_experiment():
   generate_data.run(input_file)
   swarm_over_data()
   import model_params
-  output = NuPICFileOutput("sine_output", show_anomaly_score=False)
+  output = NuPICPlotOutput("sine_output", show_anomaly_score=False)
   model = ModelFactory.create(model_params.MODEL_PARAMS)
   model.enableInference({"predictedField": "sine"})
 

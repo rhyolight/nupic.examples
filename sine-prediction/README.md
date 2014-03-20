@@ -14,6 +14,16 @@ This experiment will generate sine wave data into a csv file, then run a swarm a
 
 You have to have matplotlib installed for the `NuPICPlotOutput` class to work. If you don't, you can replace it with `NuPICFileOutput`, which will write the output to a file instead.
 
+## Writing output to file
+
+In `sine_experiment.py`, change:
+
+    output = NuPICPlotOutput("sine_output", show_anomaly_score=False)
+
+to:
+
+    output = NuPICFileOutput("sine_output", show_anomaly_score=False)
+
 ## To Run:
 
     python sine_experiment.py
