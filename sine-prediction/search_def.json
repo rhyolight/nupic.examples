@@ -27,8 +27,6 @@
     ], 
     "predictedField": "sine"
   }, 
-  "iterationCount": -1,
-  "spCoincInputPoolPct": 0.8,
   "swarmSize": "medium"
 }
 

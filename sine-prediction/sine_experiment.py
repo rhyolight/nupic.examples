@@ -19,7 +19,6 @@
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
 
-import math
 import csv
 import shutil
 
@@ -42,8 +41,9 @@ def run_sine_experiment():
   input_file = "sine.csv"
   generate_data.run(input_file)
   swarm_over_data()
+  # The model_params.py was made available by swarm_over_data().
   import model_params
-  output = NuPICPlotOutput("sine_output", show_anomaly_score=False)
+  output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
   model = ModelFactory.create(model_params.MODEL_PARAMS)
   model.enableInference({"predictedField": "sine"})
 

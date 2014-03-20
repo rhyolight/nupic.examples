@@ -22,6 +22,7 @@ import csv
 from collections import deque
 from abc import ABCMeta, abstractmethod
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 from nupic.data.inference_shifter import InferenceShifter
 
 
@@ -88,10 +89,10 @@ class NuPICPlotOutput(NuPICOutput):
     super(NuPICPlotOutput, self).__init__(*args, **kwargs)
     # turn matplotlib interactive mode on (ion)
     plt.ion()
-    self.fig = plt.figure(figsize=(20,10))
+    plt.figure(figsize=(24, 14))
+    gs = gridspec.GridSpec(2, 1, height_ratios=[3,1])
     # plot title, legend, etc
     plt.title('Sine prediction example')
-    plt.xlabel('angle (deg)')
     plt.ylabel('Sine (rad)')
     # The shifter will align prediction and actual values.
     self.shifter = InferenceShifter()
@@ -101,19 +102,25 @@ class NuPICPlotOutput(NuPICOutput):
     if self.show_anomaly_score:
       self.anomaly_score = deque([0.0] * WINDOW, maxlen=360)
     # Initialize the plot lines that we will update with each new record.
+    if self.show_anomaly_score:
+      plt.subplot(gs[0])
     self.actual_line, = plt.plot(range(WINDOW), self.actual_history)
     self.predicted_line, = plt.plot(range(WINDOW), self.predicted_history)
+    plt.legend(tuple(['actual','predicted']), loc=3)
     if self.show_anomaly_score:
-      self.anomaly_score_line, = plt.plot(range(WINDOW), self.anomaly_score)
+      plt.subplot(gs[1])
+      self.anomaly_score_line, = plt.plot(range(WINDOW), self.anomaly_score, 'r-')
+      plt.legend(tuple(['anomaly score']), loc=3)
+
     # Set the y-axis range.
     self.actual_line.axes.set_ylim(-1, 1)
     self.predicted_line.axes.set_ylim(-1, 1)
     if self.show_anomaly_score:
       self.anomaly_score_line.axes.set_ylim(-1, 1)
-    legend_fields = ['actual','predicted']
-    if self.show_anomaly_score:
-      legend_fields.append('anomaly score')
-    plt.legend(tuple(legend_fields), loc=3)
+    # legend_fields = ['actual','predicted']
+    # if self.show_anomaly_score:
+    #   legend_fields.append('anomaly score')
+    # plt.legend(tuple(legend_fields), loc=3)
 
 
 
@@ -136,6 +143,7 @@ class NuPICPlotOutput(NuPICOutput):
     if self.show_anomaly_score:
       self.anomaly_score_line.set_ydata(self.anomaly_score)  # update the data
     plt.draw()
+    plt.tight_layout()
 
 
 
