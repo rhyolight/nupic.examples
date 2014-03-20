@@ -2,7 +2,9 @@
   "includedFields": [
     {
       "fieldName": "sine", 
-      "fieldType": "float"
+      "fieldType": "float",
+      "maxValue": 1.0,
+      "minValue": -1.0
     }
   ], 
   "streamDef": {
@@ -10,23 +12,23 @@
     "version": 1, 
     "streams": [
       {
-        "info": "Sine.csv", 
+        "info": "sine.csv", 
         "source": "file://sine.csv", 
         "columns": [
           "*"
-        ], 
-        "last_record": 1000
+        ]
       }
     ]
   }, 
-  "inferenceType": "MultiStep", 
+  "inferenceType": "TemporalAnomaly", 
   "inferenceArgs": {
     "predictionSteps": [
       1
     ], 
     "predictedField": "sine"
   }, 
-  "iterationCount": -1, 
+  "iterationCount": -1,
+  "spCoincInputPoolPct": 0.8,
   "swarmSize": "medium"
 }
 
