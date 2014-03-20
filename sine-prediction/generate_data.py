@@ -24,21 +24,22 @@
 
 import csv
 import math
-import numpy
 
-def generateData():
+
+def run():
   fileHandle = open("sine.csv","w")
   writer = csv.writer(fileHandle)
   writer.writerow(["angle","sine"])
   writer.writerow(["float","float"])
   writer.writerow(["",""])
   
-  for angle in range(10000):
-    sine_value = math.sin(math.radians(angle))
-    writer.writerow([angle, sine_value])
+  for angle in range(1500):
+    angle_rad = math.radians(angle)
+    sine_value = math.sin(angle_rad)
+    writer.writerow([angle_rad, sine_value])
     
   fileHandle.close()
   
 
 if __name__ == "__main__":
-  generateData()
+  run()
