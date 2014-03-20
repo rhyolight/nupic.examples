@@ -20,27 +20,43 @@
 # ----------------------------------------------------------------------
 
 import math
+import csv
+from nupic.frameworks.opf.expdescriptionhelpers import importBaseDescription
 from nupic.frameworks.opf.modelfactory import ModelFactory
 from nupic_output import NuPICFileOutput, NuPICPlotOutput
-import sine_model_params
+# import sine_model_params
+import model_params
+
+
 
 def run_sine_experiment():
-  output = NuPICPlotOutput('sine_output', show_anomaly_score=True)
-  model = ModelFactory.create(sine_model_params.MODEL_PARAMS)
+  output = NuPICPlotOutput('sine_output', show_anomaly_score=False)
+  model = ModelFactory.create(model_params.MODEL_PARAMS)
+  # model = ModelFactory.create(setup_model_params())
   model.enableInference({'predictedField': 'sine'})
   
-  iteration = 0
-  for i in range(1000):
-    angle = iteration
-    sine_value = math.sin(math.radians(angle))
-    modelInput = {'sine': sine_value}
-    result = model.run(modelInput)
-    if angle is 180:
-      angle = 0
+  with open('sine.csv', 'rb') as sine_input:
+    csv_reader = csv.reader(sine_input)
+    # skip header rows
+    csv_reader.next()
+    csv_reader.next()
+    csv_reader.next()
+    for row in csv_reader:
+      angle = int(row[0])
+      sine_value = float(row[1])
+      result = model.run({'sine': sine_value})
+      output.write(angle, sine_value, result, prediction_step=1)
 
-    output.write(angle, sine_value, result, prediction_step=1)
-    iteration = iteration + 1
-
+  # iteration = 0
+  # for i in range(5000):
+  #   angle = iteration
+  #   sine_value = math.sin(math.radians(angle))
+  #   modelInput = {'sine': sine_value}
+  #   result = model.run(modelInput)
+  #   if angle is 180:
+  #     angle = 0
+  #   output.write(angle, sine_value, result, prediction_step=1)
+  #   iteration = iteration + 1
 
   output.close()
 

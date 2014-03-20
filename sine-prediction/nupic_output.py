@@ -82,7 +82,7 @@ class NuPICPlotOutput(NuPICOutput):
     super(NuPICPlotOutput, self).__init__(*args, **kwargs)
     # turn matplotlib interactive mode on (ion)
     plt.ion()
-    self.fig = plt.figure()
+    self.fig = plt.figure(figsize=(20,10))
     # plot title, legend, etc
     plt.title('Sine prediction example')
     plt.xlabel('angle (deg)')
@@ -108,14 +108,15 @@ class NuPICPlotOutput(NuPICOutput):
 
   def write(self, index, value, prediction_result, prediction_step=1):
     shifted_result = self.shifter.shift(prediction_result)
+    # shifted_result = prediction_result
     # Update the trailing predicted and actual value deques.
     inference = shifted_result.inferences\
       ['multiStepBestPredictions'][prediction_step]
-    anomaly_score = prediction_result.inferences['anomalyScore']
     if inference is not None:
       self.actual_history.append(shifted_result.rawInput['sine'])
       self.predicted_history.append(inference)
       if self.show_anomaly_score:
+        anomaly_score = prediction_result.inferences['anomalyScore']
         self.anomaly_score.append(anomaly_score)
 
     # Redraw the chart with the new data.
@@ -132,7 +133,7 @@ class NuPICPlotOutput(NuPICOutput):
 
 
   def close(self):
-    pass
+    plt.ioff()
 
 
 

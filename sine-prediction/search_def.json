@@ -1,0 +1,32 @@
+{
+  "includedFields": [
+    {
+      "fieldName": "sine", 
+      "fieldType": "float"
+    }
+  ], 
+  "streamDef": {
+    "info": "sine", 
+    "version": 1, 
+    "streams": [
+      {
+        "info": "Sine.csv", 
+        "source": "file://sine.csv", 
+        "columns": [
+          "*"
+        ], 
+        "last_record": 1000
+      }
+    ]
+  }, 
+  "inferenceType": "MultiStep", 
+  "inferenceArgs": {
+    "predictionSteps": [
+      1
+    ], 
+    "predictedField": "sine"
+  }, 
+  "iterationCount": -1, 
+  "swarmSize": "medium"
+}
+
