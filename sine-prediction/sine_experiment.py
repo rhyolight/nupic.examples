@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # ----------------------------------------------------------------------
 # Numenta Platform for Intelligent Computing (NuPIC)
 # Copyright (C) 2013, Numenta, Inc.  Unless you have an agreement
@@ -20,7 +22,6 @@
 # ----------------------------------------------------------------------
 
 import csv
-import shutil
 
 from nupic.frameworks.opf.modelfactory import ModelFactory
 from nupic_output import NuPICFileOutput, NuPICPlotOutput
@@ -29,22 +30,52 @@ from nupic.swarming import permutations_runner
 import generate_data
 
 SWARM_DEF = "search_def.json"
+SWARM_CONFIG = {
+  "includedFields": [
+    {
+      "fieldName": "sine",
+      "fieldType": "float",
+      "maxValue": 1.0,
+      "minValue": -1.0
+    }
+  ],
+  "streamDef": {
+    "info": "sine",
+    "version": 1,
+    "streams": [
+      {
+        "info": "sine.csv",
+        "source": "file://sine.csv",
+        "columns": [
+          "*"
+        ]
+      }
+    ]
+  },
+  "inferenceType": "TemporalAnomaly",
+  "inferenceArgs": {
+    "predictionSteps": [
+      1
+    ],
+    "predictedField": "sine"
+  },
+  "swarmSize": "medium"
+}
+
 
 
 def swarm_over_data():
-  permutations_runner.runPermutations([SWARM_DEF, "--maxWorkers=8", "--overwrite"])
-  shutil.copyfile("model_0/model_params.py", "model_params.py")
+  return permutations_runner.runWithConfig(SWARM_CONFIG,
+    {'maxWorkers': 8, 'overwrite': True})
 
 
 
 def run_sine_experiment():
   input_file = "sine.csv"
   generate_data.run(input_file)
-  swarm_over_data()
-  # The model_params.py was made available by swarm_over_data().
-  import model_params
+  model_params = swarm_over_data()
   output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
-  model = ModelFactory.create(model_params.MODEL_PARAMS)
+  model = ModelFactory.create(model_params)
   model.enableInference({"predictedField": "sine"})
 
   with open(input_file, "rb") as sine_input:
