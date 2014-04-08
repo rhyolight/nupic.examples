@@ -89,7 +89,7 @@ class NuPICPlotOutput(NuPICOutput):
     super(NuPICPlotOutput, self).__init__(*args, **kwargs)
     # turn matplotlib interactive mode on (ion)
     plt.ion()
-    plt.figure(figsize=(24, 14))
+    plt.figure(figsize=(14, 10))
     gs = gridspec.GridSpec(2, 1, height_ratios=[3,1])
     # plot title, legend, etc
     plt.title('Sine prediction example')
@@ -117,10 +117,6 @@ class NuPICPlotOutput(NuPICOutput):
     self.predicted_line.axes.set_ylim(-1, 1)
     if self.show_anomaly_score:
       self.anomaly_score_line.axes.set_ylim(-1, 1)
-    # legend_fields = ['actual','predicted']
-    # if self.show_anomaly_score:
-    #   legend_fields.append('anomaly score')
-    # plt.legend(tuple(legend_fields), loc=3)
 
 
 
