@@ -59,7 +59,7 @@ SWARM_CONFIG = {
     ],
     "predictedField": "sine"
   },
-  "swarmSize": "small"
+  "swarmSize": "medium"
 }
 
 
