@@ -27,7 +27,8 @@ from nupic.swarming import permutations_runner
 
 import generate_data
 
-PLOT = False
+# Change this to switch from a matplotlib plot to file output.
+PLOT = True
 SWARM_DEF = "search_def.json"
 SWARM_CONFIG = {
   "includedFields": [
@@ -58,7 +59,7 @@ SWARM_CONFIG = {
     ],
     "predictedField": "sine"
   },
-  "swarmSize": "medium"
+  "swarmSize": "small"
 }
 
 
@@ -74,9 +75,9 @@ def run_sine_experiment():
   generate_data.run(input_file)
   model_params = swarm_over_data()
   if PLOT:
-    output = NuPICFileOutput("sine_output", show_anomaly_score=True)
-  else:
     output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
+  else:
+    output = NuPICFileOutput("sine_output", show_anomaly_score=True)
   model = ModelFactory.create(model_params)
   model.enableInference({"predictedField": "sine"})
 
