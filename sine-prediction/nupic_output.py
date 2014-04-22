@@ -18,11 +18,13 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
+plot = 0
 import csv
 from collections import deque
 from abc import ABCMeta, abstractmethod
-import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
+if plot == 1:
+  import matplotlib.pyplot as plt
+  import matplotlib.gridspec as gridspec
 from nupic.data.inference_shifter import InferenceShifter
 
 

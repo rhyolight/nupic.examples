@@ -20,15 +20,13 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
-
+plot = 0
 import csv
-
 from nupic.frameworks.opf.modelfactory import ModelFactory
 from nupic_output import NuPICFileOutput, NuPICPlotOutput
 from nupic.swarming import permutations_runner
 
 import generate_data
-
 SWARM_DEF = "search_def.json"
 SWARM_CONFIG = {
   "includedFields": [
@@ -74,7 +72,10 @@ def run_sine_experiment():
   input_file = "sine.csv"
   generate_data.run(input_file)
   model_params = swarm_over_data()
-  output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
+  if plot == 0:
+    output = NuPICFileOutput("sine_output", show_anomaly_score=True)
+  if plot == 1:
+    output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
   model = ModelFactory.create(model_params)
   model.enableInference({"predictedField": "sine"})
 
