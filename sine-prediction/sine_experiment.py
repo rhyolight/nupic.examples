@@ -28,7 +28,7 @@ from nupic.swarming import permutations_runner
 import generate_data
 
 # Change this to switch from a matplotlib plot to file output.
-PLOT = True
+PLOT = False
 SWARM_DEF = "search_def.json"
 SWARM_CONFIG = {
   "includedFields": [
