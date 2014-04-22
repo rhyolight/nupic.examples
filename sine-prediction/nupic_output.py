@@ -18,14 +18,17 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
-plot = 0
 import csv
 from collections import deque
 from abc import ABCMeta, abstractmethod
-if plot == 1:
+from nupic.data.inference_shifter import InferenceShifter
+# Some users might not have matplotlib, and will only be using NuPICFileOutput.
+# So we can attempt to import and swallow any import errors that occur.
+try:
   import matplotlib.pyplot as plt
   import matplotlib.gridspec as gridspec
-from nupic.data.inference_shifter import InferenceShifter
+except ImportError:
+  pass
 
 
 WINDOW = 360
