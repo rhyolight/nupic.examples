@@ -29,7 +29,6 @@ import generate_data
 
 # Change this to switch from a matplotlib plot to file output.
 PLOT = False
-SWARM_DEF = "search_def.json"
 SWARM_CONFIG = {
   "includedFields": [
     {
