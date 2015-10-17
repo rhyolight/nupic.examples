@@ -145,6 +145,7 @@ class NuPICPlotOutput(NuPICOutput):
       self.anomaly_score_line.set_ydata(self.anomaly_score)  # update the data
     plt.draw()
     plt.tight_layout()
+    plt.pause(1)
 
 
 
