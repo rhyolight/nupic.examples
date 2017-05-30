@@ -21,11 +21,13 @@
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
 import csv
-from nupic.frameworks.opf.modelfactory import ModelFactory
+from nupic.frameworks.opf.model_factory import ModelFactory
 from nupic_output import NuPICFileOutput, NuPICPlotOutput
 from nupic.swarming import permutations_runner
 
 import generate_data
+
+from model_0 import model_params
 
 # Change this to switch from a matplotlib plot to file output.
 PLOT = False
@@ -72,12 +74,13 @@ def swarm_over_data():
 def run_sine_experiment():
   input_file = "sine.csv"
   generate_data.run(input_file)
-  model_params = swarm_over_data()
+  # params = swarm_over_data()
+  params = model_params.MODEL_PARAMS
   if PLOT:
     output = NuPICPlotOutput("sine_output", show_anomaly_score=True)
   else:
     output = NuPICFileOutput("sine_output", show_anomaly_score=True)
-  model = ModelFactory.create(model_params)
+  model = ModelFactory.create(params)
   model.enableInference({"predictedField": "sine"})
 
   with open(input_file, "rb") as sine_input:
@@ -92,7 +95,7 @@ def run_sine_experiment():
     for row in csv_reader:
       angle = float(row[0])
       sine_value = float(row[1])
-      result = model.run({"sine": sine_value})
+      result = model.run({"sine": sine_value, "angle": angle})
       output.write(angle, sine_value, result, prediction_step=1)
 
   output.close()
