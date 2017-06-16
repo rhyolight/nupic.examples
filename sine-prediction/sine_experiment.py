@@ -21,7 +21,7 @@
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
 import csv
-from nupic.frameworks.opf.modelfactory import ModelFactory
+from nupic.frameworks.opf.model_factory import ModelFactory
 from nupic_output import NuPICFileOutput, NuPICPlotOutput
 from nupic.swarming import permutations_runner
 
